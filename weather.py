@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 import statistics
 
-DEGREE_SYBMOL = u"\N{DEGREE SIGN}C"
+DEGREE_SYMBOL = u"\N{DEGREE SIGN}C"
 
 
 def format_temperature(temp):
@@ -14,7 +14,7 @@ def format_temperature(temp):
     Returns:
         A string contain the temperature and "degrees celcius."
     """
-    return f"{temp}{DEGREE_SYBMOL}"
+    return f"{temp}{DEGREE_SYMBOL}"
 
 
 def convert_date(iso_string: str) -> str:
@@ -27,8 +27,8 @@ def convert_date(iso_string: str) -> str:
     """
 
     # Assumptions:
-    # string is always a correctly formatted iso string
-    # python v 3 onwards being used
+    # Argument string is always a correctly formatted iso string
+    # Python v3 onwards being used (datetime.fromisoformat is from v3 onwards)
 
     # Create datetime object type
     iso_date = datetime.fromisoformat(iso_string)
@@ -66,9 +66,12 @@ def calculate_mean(weather_data: list) -> float:
     weather_data_float = [float(data_point) for data_point in weather_data]
 
     # Use python's statistics library to get the mean
+    weather_mean = statistics.mean(weather_data_float)
+
     # Alternative would be to add up the values of the list using a loop
     # and then divide by len(list) to get the mean.
-    weather_mean = statistics.mean(weather_data_float)
+
+    # weather_mean = sum(weather_data_float)/len(weather_data_float)
 
     return weather_mean
 
@@ -168,8 +171,11 @@ def generate_summary(weather_data: list) -> str:
         min_temps.append(day[1])
         max_temps.append(day[2])
 
-    # Assumes no duplicate min or max days - otherwise you'd need a loop/ to concatenate dates with same min/max eg
-    # 'The lowest temperature will be 10.0C, and will occur on Tuesday 10 July 2023 and Wednesday 11 July 2023' etc
+    # Assumes no duplicate min or max days - otherwise probs 
+    # need some logic to either choose one instance (eg the 'earliest' day)
+    # or collect => concatenate dates with same min/max eg
+    # 'The lowest temperature will be 10.0C, and will occur on 
+    # Tuesday 10 July 2023 and Wednesday 11 July 2023' etc
 
     # Get the max temperature information
     max_temp_value, max_value_index = find_max(max_temps)
@@ -183,10 +189,10 @@ def generate_summary(weather_data: list) -> str:
 
     # Compile a single string for the temperature information whilst converting temp units/getting celsius symbol
     summary_string = f"{str(len(weather_data))} Day Overview\n" \
-                     f"  The lowest temperature will be {format_temperature(convert_f_to_c(min_temp_value))}, and will occur on {min_temp_formatted_date}.\n" \
-                     f"  The highest temperature will be {format_temperature(convert_f_to_c(max_temp_value))}, and will occur on {max_temp_formatted_date}.\n" \
-                     f"  The average low this week is {format_temperature(convert_f_to_c(mean_min_temp))}.\n" \
-                     f"  The average high this week is {format_temperature(convert_f_to_c(mean_max_temp))}.\n"
+                    f"  The lowest temperature will be {format_temperature(convert_f_to_c(min_temp_value))}, and will occur on {min_temp_formatted_date}.\n" \
+                    f"  The highest temperature will be {format_temperature(convert_f_to_c(max_temp_value))}, and will occur on {max_temp_formatted_date}.\n" \
+                    f"  The average low this week is {format_temperature(convert_f_to_c(mean_min_temp))}.\n" \
+                    f"  The average high this week is {format_temperature(convert_f_to_c(mean_max_temp))}.\n"
 
     return summary_string
 
